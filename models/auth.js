@@ -17,7 +17,7 @@ if (loginBtn) {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            window.location.href = "./index.html";
+            window.location.href = "../index.html";
         } catch (error) {
             document.getElementById("errorMessage").innerText = error.message;
         }
@@ -31,14 +31,3 @@ onAuthStateChanged(auth, (user) => {
         window.location.href = "./login.html";
     }
 });
-
-
-// Выход из системы 
-const logoutBtn = document.getElementById("logoutBtn");
-
-if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-        await signOut(auth);
-        window.location.href = "./login.html";
-    });
-}

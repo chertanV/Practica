@@ -1,30 +1,45 @@
 /**
  * ViewModel для управления логикой формирования отчетов.
  * Связывает модель данных и сервис генерации Excel.
- */
- class ReportViewModel {
+*/
+import ExcelService from "../services/ExcelService.js";
+
+class ReportViewModel {
     constructor(goodsData) {
         this.goods = goodsData;
     }
 
-    /**
-     * TODO: Реализовать фильтрацию данных.
-     * @param {number} minRating - Минимальный рейтинг товара.
-     * @param {Date} startDate - Начало периода.
-     * @param {Date} endDate - Конец периода.
-     * @returns {Array} Отфильтрованный массив товаров.
-     */
     getFilteredData(minRating, startDate, endDate) {
-        // Подсказка: используйте метод .filter()
-        return [];
+        return this.goods.filter(good => {
+            return (
+                good.rating >= minRating &&
+                good.saleDate >= startDate &&
+                good.saleDate <= endDate
+            );
+        });
     }
 
-    /**
-     * TODO: Организовать вызов сервиса Excel.
-     */
     async exportReport(config) {
         console.log('Вызов экспорта с параметрами:', config);
-        // Здесь должен быть вызов ExcelService
+        const filteredData = this.getFilteredData(
+            config.minRating,
+            config.startDate,
+            config.endDate
+        );
+
+        // Добавляем позицию в рейтинге
+        const sorted = filteredData.sort((a, b) => b.rating - a.rating);
+
+        const dataForExcel = sorted.map((item, index) => ({
+            "Позиция": index + 1,
+            "Название": item.name,
+            "Поставщик": item.counterparty,
+            "Рейтинг": item.rating,
+            "Дата продажи": item.saleDate.toISOString().split('T')[0],
+            "Цена": item.price
+        }));
+
+        await ExcelService.generateRatingReport(dataForExcel);
     }
 }
 

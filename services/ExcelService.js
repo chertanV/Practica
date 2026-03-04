@@ -1,20 +1,19 @@
-import ExcelJS from 'exceljs';
+import * as XLSX from 'https://cdn.jsdelivr.net/npm/xlsx/+esm';
 
 /**
  * Сервис для технической работы с Excel-файлами.
  * Не содержит бизнес-логики, только формирование документа.
  */
 class ExcelService {
-    /**
-     * TODO: Реализовать создание книги Excel и сохранение файла.
-     * @param {Array} data - Массив данных для записи.
-     */
+
     static async generateRatingReport(data) {
-        // 1. Создать workbook и worksheet
-        // 2. Определить колонки
-        // 3. Добавить данные из массива
-        // 4. Сохранить (для Node.js использовать .xlsx.writeFile)
-        console.warn('Метод generateRatingReport еще не реализован');
+
+        const worksheet = XLSX.utils.json_to_sheet(data);
+
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Rating Report");
+
+        XLSX.writeFile(workbook, "rating_report.xlsx");
     }
 }
 
