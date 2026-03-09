@@ -16,9 +16,11 @@ if (loginBtn) {
         const password = document.getElementById("password").value;
 
         try {
+            console.log("Вход с email: ", email);
             await signInWithEmailAndPassword(auth, email, password);
             window.location.href = "../index.html";
         } catch (error) {
+            console.error("Ошибка входа: ", error);
             document.getElementById("errorMessage").innerText = error.message;
         }
     });
@@ -28,6 +30,7 @@ if (loginBtn) {
 // Защита обхода 
 onAuthStateChanged(auth, (user) => {
     if (!user && window.location.pathname.includes("index.html")) {
+        console.log("Пользователь не авторизован, перенаправление на страницу входа");
         window.location.href = "./login.html";
     }
 });
