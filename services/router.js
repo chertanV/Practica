@@ -8,7 +8,9 @@ class Router {
             //Примеры маршрутов, которые можно использовать для навигации:
             // 'sales': 'views/sales.html',
             'main': './view/main.html',
-            'reports': './view/reports.html'
+            'reports': './view/reports.html',
+            'imports': './view/import.html',
+            'products': './view/products.html'
         };
     }
 
