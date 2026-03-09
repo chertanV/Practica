@@ -1,0 +1,26 @@
+<div class="login-page">
+  <div class="login-card card">
+    <h2 class="login-title">Регистрация</h2>
+    <form id="registerForm" class="login-form">
+      <div class="form-field">
+        <label for="regEmail">Email</label>
+        <input type="email" id="regEmail" placeholder="example@mail.com" required>
+      </div>
+      <div class="form-field">
+        <label for="regPassword">Пароль</label>
+        <input type="password" id="regPassword" placeholder="••••••••" required>
+      </div>
+      <div class="form-field">
+        <label for="regPasswordRepeat">Повторите пароль</label>
+        <input type="password" id="regPasswordRepeat" placeholder="••••••••" required>
+      </div>
+      <p id="registerError" class="error-msg hidden"></p>
+      <button type="submit" id="registerBtn" class="btn btn-primary w-full">Создать аккаунт</button>
+      <p class="text-sm mt-8">
+        Уже есть аккаунт?
+        <a href="#" class="nav-link" data-route="login">Войти</a>
+      </p>
+    </form>
+  </div>
+</div>
+
