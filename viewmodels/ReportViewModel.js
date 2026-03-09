@@ -1,7 +1,3 @@
-/**
- * ViewModel для управления логикой формирования отчетов.
- * Связывает модель данных и сервис генерации Excel.
-*/
 import ExcelService from "../services/ExcelService.js";
 
 class ReportViewModel {
@@ -9,33 +5,35 @@ class ReportViewModel {
         this.goods = goodsData;
     }
 
-    getFilteredData(minRating, startDate, endDate) {
+    getFilteredData(minSales, startDate, endDate) {
+
         return this.goods.filter(good => {
+
+            const saleDate = new Date(good.saleDate);
+
             return (
-                good.rating >= minRating &&
-                good.saleDate >= startDate &&
-                good.saleDate <= endDate
+                good.sales >= minSales &&
+                saleDate >= startDate &&
+                saleDate <= endDate
             );
         });
     }
 
     async exportReport(config) {
-        console.log('Вызов экспорта с параметрами:', config);
         const filteredData = this.getFilteredData(
-            config.minRating,
+            config.minSales,
             config.startDate,
             config.endDate
         );
 
-        // Добавляем позицию в рейтинге
-        const sorted = filteredData.sort((a, b) => b.rating - a.rating);
+        const sorted = filteredData.sort((a, b) => b.sales - a.sales);
 
         const dataForExcel = sorted.map((item, index) => ({
             "Позиция": index + 1,
             "Название": item.name,
-            "Поставщик": item.counterparty,
-            "Рейтинг": item.rating,
-            "Дата продажи": item.saleDate.toISOString().split('T')[0],
+            "Поставщик": item.supplier,
+            "Продажи": item.sales,
+            "Дата продажи": item.saleDate,
             "Цена": item.price
         }));
 
