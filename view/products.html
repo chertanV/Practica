@@ -1,393 +1,132 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Товары</title>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-
-</head>
-<body>
-
-<header>
-  <div class="logo">⬡ Склад</div>
-  <div class="nav-sep"></div>
-  <a href="#" class="nav-link">Главная</a>
-  <a href="#" class="nav-link active">Товары</a>
-  <a href="#" class="nav-link">Поставщики</a>
-  <a href="#" class="nav-link">Заказы</a>
-  <a href="#" class="nav-link">Отчёты</a>
-</header>
-
-<main>
-  <div class="page-header">
-    <div>
-      <div class="page-title">Товары</div>
-      <div class="page-subtitle">Управление товарным каталогом</div>
-    </div>
-    <button class="btn-add" onclick="openModal('add')">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 1v12M1 7h12"/></svg>
-      Добавить товар
-    </button>
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Товары</h1>
+    <p class="page-subtitle">Список номенклатуры с фильтрами по поставщику и категории</p>
   </div>
+</div>
 
-  <!-- TOOLBAR -->
-  <div class="toolbar">
-    <div class="search-wrap">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
-        <circle cx="7" cy="7" r="5"/><path d="M10.5 10.5l3 3"/>
-      </svg>
-      <input class="search-input" type="text" placeholder="Поиск по названию, артикулу..." id="searchInput" oninput="applyFilters()"/>
+<div class="card mb-20">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">Фильтры и поиск</h3>
+      <p class="card-subtitle">Выберите поставщика, категорию или найдите по названию</p>
     </div>
-
+    <div class="btn-group">
+      <button id="addProductBtn" class="btn btn-primary">+ Новый товар</button>
+      <button id="backMain" class="btn btn-secondary">Назад</button>
+    </div>
+  </div>
+  <div class="toolbar">
     <div class="filter-group">
       <span class="filter-label">Поставщик</span>
-      <select class="filter-select" id="filterSupplier" onchange="applyFilters()">
+      <select id="supplierFilter" class="filter-select">
         <option value="">Все поставщики</option>
-        <option>ООО Технопром</option>
-        <option>ИП Иванов</option>
-        <option>GlobalParts</option>
-        <option>ТД Меркурий</option>
       </select>
     </div>
 
     <div class="filter-group">
-      <span class="filter-label">Цена</span>
-      <select class="filter-select" id="filterPrice" onchange="applyFilters()">
-        <option value="">Любая цена</option>
-        <option value="0-500">до 500 ₽</option>
-        <option value="500-2000">500 – 2 000 ₽</option>
-        <option value="2000-10000">2 000 – 10 000 ₽</option>
-        <option value="10000+">от 10 000 ₽</option>
+      <span class="filter-label">Категория</span>
+      <select id="categoryFilter" class="filter-select">
+        <option value="">Все категории</option>
       </select>
     </div>
 
-    <div class="filter-group">
-      <span class="filter-label">Наличие</span>
-      <select class="filter-select" id="filterStock" onchange="applyFilters()">
-        <option value="">Все</option>
-        <option value="in">В наличии</option>
-        <option value="low">Мало</option>
-        <option value="out">Нет в наличии</option>
-      </select>
+    <div class="search-wrap">
+      <input type="text" id="searchImput" class="search-input" placeholder="Поиск по названию">
     </div>
+
+    <button id="applyFilter" class="btn btn-secondary">Применить</button>
   </div>
+</div>
 
-  <div class="results-info" id="resultsInfo">Показано: <span>8</span> товаров</div>
+<div class="results-info">
+  Найдено товаров: <span id="productsCount">0</span>
+</div>
 
-  <!-- TABLE -->
-  <div class="table-wrapper">
-    <table id="productsTable">
-      <thead>
-        <tr>
-          <th class="checkbox-cell"><input type="checkbox" id="checkAll" onchange="toggleAll(this)"/></th>
-          <th class="sortable" onclick="sortTable('id')">Артикул <span class="sort-icon">↕</span></th>
-          <th class="sortable" onclick="sortTable('name')">Наименование <span class="sort-icon">↕</span></th>
-          <th class="sortable" onclick="sortTable('category')">Категория <span class="sort-icon">↕</span></th>
-          <th class="sortable" onclick="sortTable('supplier')">Поставщик <span class="sort-icon">↕</span></th>
-          <th class="sortable" onclick="sortTable('price')">Цена <span class="sort-icon">↕</span></th>
-          <th class="sortable" onclick="sortTable('stock')">Остаток <span class="sort-icon">↕</span></th>
-          <th>Статус</th>
-          <th>Действия</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-    <div class="bottom-bar">
-      <div class="selection-actions">
-        <span class="selection-info" id="selInfo">0 выбрано</span>
-        <button class="btn-bulk" onclick="editSelected()">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8.5 1.5l2 2-7 7H1.5v-2l7-7z"/></svg>
-          Изменить
-        </button>
-        <button class="btn-bulk del-bulk" onclick="deleteSelected()">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h8m-6 0V2h4v1M4 5v4m4-4v4M3 9l.5 1.5h5L9 9"/></svg>
-          Удалить
-        </button>
-      </div>
-      <div class="pagination">
-        <button class="pg-btn active">1</button>
-        <button class="pg-btn">2</button>
-        <button class="pg-btn">3</button>
-        <button class="pg-btn">›</button>
-      </div>
-    </div>
-  </div>
-</main>
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Поставщик</th>
+        <th>Категория</th>
+        <th>Цена</th>
+        <th>Остаток</th>
+        <th>Действия</th>
+      </tr>
+    </thead>
+    <tbody id="productsTable"></tbody>
+  </table>
+</div>
 
-<!-- ADD/EDIT MODAL -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
+<div class="modal-overlay" id="productModalOverlay">
+  <div class="modal modal-lg">
     <div class="modal-header">
-      <div class="modal-title" id="modalTitle">Добавить товар</div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h3 class="modal-title" id="productModalTitle">Новый товар</h3>
+      <button type="button" class="modal-close" id="productModalClose">&times;</button>
     </div>
     <div class="modal-body">
       <div class="form-row">
         <div class="form-field">
-          <label>Артикул</label>
-          <input type="text" id="fId" placeholder="TK-0001"/>
+          <label for="productName">Название</label>
+          <input type="text" id="productName" placeholder="Например: Ноутбук" required>
         </div>
         <div class="form-field">
-          <label>Категория</label>
-          <select id="fCategory">
-            <option>Электроника</option>
-            <option>Комплектующие</option>
-            <option>Аксессуары</option>
-            <option>Инструменты</option>
-          </select>
+          <label for="productSupplier">Поставщик</label>
+          <input type="text" id="productSupplier" placeholder="Например: ООО Рога и копыта">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="productCategory">Категория</label>
+          <input type="text" id="productCategory" placeholder="Например: Электроника">
+        </div>
+        <div class="form-field">
+          <label for="productPrice">Цена</label>
+          <input type="number" id="productPrice" min="0" step="0.01" placeholder="0">
         </div>
       </div>
       <div class="form-field">
-        <label>Наименование</label>
-        <input type="text" id="fName" placeholder="Название товара"/>
-      </div>
-      <div class="form-row">
-        <div class="form-field">
-          <label>Поставщик</label>
-          <select id="fSupplier">
-            <option>ООО Технопром</option>
-            <option>ИП Иванов</option>
-            <option>GlobalParts</option>
-            <option>ТД Меркурий</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label>Цена (₽)</label>
-          <input type="number" id="fPrice" placeholder="0"/>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">
-          <label>Остаток (шт.)</label>
-          <input type="number" id="fStock" placeholder="0"/>
-        </div>
-        <div class="form-field">
-          <label>Статус</label>
-          <select id="fStatus">
-            <option value="in">В наличии</option>
-            <option value="low">Мало</option>
-            <option value="out">Нет в наличии</option>
-          </select>
-        </div>
+        <label for="productStock">Остаток</label>
+        <input type="number" id="productStock" min="0" step="1" placeholder="0">
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Отмена</button>
-      <button class="btn-save" onclick="saveProduct()">Сохранить</button>
+      <button type="button" class="btn-cancel" id="productModalCancel">Отмена</button>
+      <button type="button" class="btn-save" id="productModalSave">Сохранить</button>
     </div>
   </div>
 </div>
 
-<!-- CONFIRM DELETE MODAL -->
-<div class="modal-overlay" id="confirmOverlay">
+<div class="modal-overlay" id="sellModalOverlay">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">Удаление товара</div>
-      <button class="modal-close" onclick="closeConfirm()">✕</button>
+      <h3 class="modal-title">Продать товар</h3>
+      <button type="button" class="modal-close" id="sellModalClose">&times;</button>
     </div>
-    <div class="modal-body" style="text-align:center; padding: 28px 24px;">
-      <div class="confirm-icon">🗑️</div>
-      <div class="confirm-msg" id="confirmMsg">Вы уверены, что хотите удалить этот товар?<br/>Это действие нельзя отменить.</div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label>Товар</label>
+        <p id="sellProductName" class="text-muted"></p>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="sellQuantity">Количество</label>
+          <input type="number" id="sellQuantity" min="1" value="1" placeholder="1">
+        </div>
+        <div class="form-field">
+          <label for="sellDate">Дата продажи</label>
+          <input type="date" id="sellDate">
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="sellPrice">Цена за единицу</label>
+        <input type="number" id="sellPrice" min="0" step="0.01" placeholder="0">
+      </div>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeConfirm()">Отмена</button>
-      <button class="btn-del-confirm" onclick="confirmDelete()">Удалить</button>
+      <button type="button" class="btn-cancel" id="sellModalCancel">Отмена</button>
+      <button type="button" class="btn-save" id="sellModalSave">Оформить продажу</button>
     </div>
   </div>
 </div>
-
-<!-- TOAST -->
-<div class="toast" id="toast">
-  <div class="toast-dot" id="toastDot"></div>
-  <span id="toastMsg">Товар сохранён</span>
-</div>
-
-<script>
-  let products = [
-    { id:'TK-0001', name:'Процессор Intel Core i7', category:'Электроника', supplier:'ООО Технопром', price:28900, stock:14, status:'in' },
-    { id:'TK-0002', name:'Оперативная память 16GB DDR5', category:'Комплектующие', supplier:'GlobalParts', price:5490, stock:3, status:'low' },
-    { id:'TK-0003', name:'SSD 1TB NVMe', category:'Комплектующие', supplier:'ООО Технопром', price:8200, stock:21, status:'in' },
-    { id:'TK-0004', name:'USB-C хаб 7-в-1', category:'Аксессуары', supplier:'ИП Иванов', price:1890, stock:0, status:'out' },
-    { id:'TK-0005', name:'Термопаста Arctic MX-4', category:'Аксессуары', supplier:'GlobalParts', price:390, stock:56, status:'in' },
-    { id:'TK-0006', name:'Отвёртка PH2 магнитная', category:'Инструменты', supplier:'ТД Меркурий', price:240, stock:2, status:'low' },
-    { id:'TK-0007', name:'Материнская плата ASUS Z790', category:'Комплектующие', supplier:'ООО Технопром', price:34500, stock:7, status:'in' },
-    { id:'TK-0008', name:'Вентилятор 120mm PWM', category:'Аксессуары', supplier:'ТД Меркурий', price:650, stock:0, status:'out' },
-  ];
-
-  let filtered = [...products];
-  let editIndex = null;
-  let deleteIndex = null;
-  let sortKey = null;
-  let sortAsc = true;
-
-  function stockStatus(s) {
-    if (s === 'in')  return '<span class="badge badge-green"><span class="badge-dot"></span>В наличии</span>';
-    if (s === 'low') return '<span class="badge badge-yellow"><span class="badge-dot"></span>Мало</span>';
-    return '<span class="badge badge-red"><span class="badge-dot"></span>Нет</span>';
-  }
-
-  function render() {
-    const tbody = document.getElementById('tbody');
-    tbody.innerHTML = '';
-    filtered.forEach((p, i) => {
-      const realIdx = products.indexOf(p);
-      tbody.innerHTML += `
-        <tr id="row-${realIdx}">
-          <td class="checkbox-cell"><input type="checkbox" class="row-check" data-idx="${realIdx}" onchange="updateSel()"/></td>
-          <td class="mono">${p.id}</td>
-          <td>${p.name}</td>
-          <td style="color:var(--muted);font-size:12px">${p.category}</td>
-          <td style="font-size:12px">${p.supplier}</td>
-          <td><span class="price">${p.price.toLocaleString('ru')} ₽</span></td>
-          <td class="mono">${p.stock} шт.</td>
-          <td>${stockStatus(p.status)}</td>
-          <td>
-            <div class="row-actions">
-              <button class="btn-icon edit" onclick="openModal('edit',${realIdx})">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8.5 1.5l2 2-7 7H1.5v-2l7-7z"/></svg>
-                Изменить
-              </button>
-              <button class="btn-icon del" onclick="askDelete(${realIdx})">
-                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h8m-6 0V2h4v1M4 5v4m4-4v4M3 9l.5 1.5h5L9 9"/></svg>
-                Удалить
-              </button>
-            </div>
-          </td>
-        </tr>`;
-    });
-    document.getElementById('resultsInfo').innerHTML = `Показано: <span>${filtered.length}</span> из ${products.length} товаров`;
-    updateSel();
-  }
-
-  function applyFilters() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    const sup = document.getElementById('filterSupplier').value;
-    const price = document.getElementById('filterPrice').value;
-    const stock = document.getElementById('filterStock').value;
-
-    filtered = products.filter(p => {
-      if (q && !p.name.toLowerCase().includes(q) && !p.id.toLowerCase().includes(q)) return false;
-      if (sup && p.supplier !== sup) return false;
-      if (price) {
-        if (price === '0-500' && p.price >= 500) return false;
-        if (price === '500-2000' && (p.price < 500 || p.price >= 2000)) return false;
-        if (price === '2000-10000' && (p.price < 2000 || p.price >= 10000)) return false;
-        if (price === '10000+' && p.price < 10000) return false;
-      }
-      if (stock === 'in' && p.status !== 'in') return false;
-      if (stock === 'low' && p.status !== 'low') return false;
-      if (stock === 'out' && p.status !== 'out') return false;
-      return true;
-    });
-    render();
-  }
-
-  function sortTable(key) {
-    if (sortKey === key) sortAsc = !sortAsc;
-    else { sortKey = key; sortAsc = true; }
-    filtered.sort((a, b) => {
-      let va = a[key], vb = b[key];
-      if (typeof va === 'string') va = va.toLowerCase(), vb = vb.toLowerCase();
-      return sortAsc ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
-    });
-    document.querySelectorAll('th.sortable').forEach(th => th.classList.remove('sorted'));
-    document.querySelectorAll('th.sortable').forEach(th => {
-      if (th.textContent.trim().toLowerCase().startsWith(key === 'id' ? 'арт' : key === 'name' ? 'наим' : key === 'price' ? 'цена' : key === 'stock' ? 'ост' : key === 'supplier' ? 'пост' : 'кат')) th.classList.add('sorted');
-    });
-    render();
-  }
-
-  function toggleAll(cb) {
-    document.querySelectorAll('.row-check').forEach(c => {
-      c.checked = cb.checked;
-      const row = document.getElementById('row-' + c.dataset.idx);
-      if (row) row.classList.toggle('selected', cb.checked);
-    });
-    updateSel();
-  }
-
-  function updateSel() {
-    const checked = document.querySelectorAll('.row-check:checked');
-    document.getElementById('selInfo').textContent = checked.length + ' выбрано';
-    document.querySelectorAll('.row-check').forEach(c => {
-      const row = document.getElementById('row-' + c.dataset.idx);
-      if (row) row.classList.toggle('selected', c.checked);
-    });
-  }
-
-  function openModal(mode, idx) {
-    editIndex = mode === 'edit' ? idx : null;
-    document.getElementById('modalTitle').textContent = mode === 'add' ? 'Добавить товар' : 'Редактировать товар';
-    if (mode === 'edit') {
-      const p = products[idx];
-      document.getElementById('fId').value = p.id;
-      document.getElementById('fName').value = p.name;
-      document.getElementById('fCategory').value = p.category;
-      document.getElementById('fSupplier').value = p.supplier;
-      document.getElementById('fPrice').value = p.price;
-      document.getElementById('fStock').value = p.stock;
-      document.getElementById('fStatus').value = p.status;
-    } else {
-      ['fId','fName','fPrice','fStock'].forEach(id => document.getElementById(id).value = '');
-    }
-    document.getElementById('modalOverlay').classList.add('open');
-  }
-
-  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
-
-  function saveProduct() {
-    const p = {
-      id: document.getElementById('fId').value || 'TK-' + String(products.length+1).padStart(4,'0'),
-      name: document.getElementById('fName').value || 'Новый товар',
-      category: document.getElementById('fCategory').value,
-      supplier: document.getElementById('fSupplier').value,
-      price: parseInt(document.getElementById('fPrice').value) || 0,
-      stock: parseInt(document.getElementById('fStock').value) || 0,
-      status: document.getElementById('fStatus').value,
-    };
-    if (editIndex !== null) { products[editIndex] = p; showToast('Товар обновлён'); }
-    else { products.push(p); showToast('Товар добавлен'); }
-    closeModal();
-    applyFilters();
-  }
-
-  function askDelete(idx) { deleteIndex = idx; document.getElementById('confirmMsg').innerHTML = `Удалить товар <strong>${products[idx].name}</strong>?<br/>Это действие нельзя отменить.`; document.getElementById('confirmOverlay').classList.add('open'); }
-  function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); }
-  function confirmDelete() {
-    products.splice(deleteIndex, 1);
-    closeConfirm();
-    applyFilters();
-    showToast('Товар удалён', true);
-  }
-
-  function deleteSelected() {
-    const checked = [...document.querySelectorAll('.row-check:checked')].map(c => parseInt(c.dataset.idx));
-    if (!checked.length) return;
-    checked.sort((a,b)=>b-a).forEach(i => products.splice(i,1));
-    applyFilters();
-    showToast(checked.length + ' товаров удалено', true);
-  }
-
-  function editSelected() {
-    const checked = [...document.querySelectorAll('.row-check:checked')];
-    if (checked.length === 1) openModal('edit', parseInt(checked[0].dataset.idx));
-  }
-
-  function showToast(msg, warn=false) {
-    const t = document.getElementById('toast');
-    document.getElementById('toastMsg').textContent = msg;
-    document.getElementById('toastDot').className = 'toast-dot' + (warn ? ' warn' : '');
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
-  }
-
-  // init
-  render();
-
-  // close modals on overlay click
-  document.getElementById('modalOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
-  document.getElementById('confirmOverlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeConfirm(); });
-</script>
-</body>
-</html>
