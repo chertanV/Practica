@@ -1,9 +1,36 @@
-<h2>Импорт данных через Excel</h2>
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Импорт данных</h1>
+    <p class="page-subtitle">Загрузка товаров и продаж из Excel-файла</p>
+  </div>
+</div>
 
-<input type="file" id="excelFile" accept=".xlsx, .xls"/>
+<div class="card">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">Импорт из Excel</h3>
+      <p class="card-subtitle">Поддерживаются файлы .xlsx и .xls</p>
+    </div>
+    <button id="backMain" class="btn btn-secondary">Назад</button>
+  </div>
 
-<button id="uploadExcel">Загрузить</button>
+  <div class="modal-body" style="padding: 20px 24px 24px;">
+    <div class="form-field">
+      <label for="importMode">Режим импорта</label>
+      <select id="importMode">
+        <option value="products">Товары</option>
+        <option value="sales">Продажи (для отчётов)</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label for="excelFile">Выберите файл</label>
+      <input type="file" id="excelFile" accept=".xlsx, .xls">
+    </div>
 
-<p id="status"></p>
+    <div class="btn-group mt-16">
+      <button id="uploadExcel" class="btn btn-primary">Загрузить</button>
+    </div>
 
-<button id="backMain">Назад</button>
+    <p id="status" class="mt-16 text-sm text-muted"></p>
+  </div>
+</div>

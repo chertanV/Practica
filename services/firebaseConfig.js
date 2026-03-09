@@ -6,6 +6,8 @@ import { getAnalytics } from
 
 import { getAuth } from 
 "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getFirestore } from 
+"https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 import { getFirestore} from
 "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
