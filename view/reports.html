@@ -1,8 +1,8 @@
 <h1>Отчёты</h1>
 
 <label>
-  Минимальный рейтинг:
-  <input type="number" id="minRating" value="1" min="1" max="5">
+  Минимальные продажи:
+  <input type="number" id="minSales" value="1" min="1">
 </label>
 
 <br><br>
@@ -21,5 +21,23 @@
 
 <br><br>
 
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Название</th>
+      <th>Поставщик</th>
+      <th>Продажи</th>
+      <th>Цена</th>
+    </tr>
+  </thead>
+
+  <tbody id="reportTable"></tbody>
+
+</table>
+
+<br><br>
+
 <button id="generateReport">Сгенерировать отчёт</button>
+<button id="exportExcel">Экспорт Excel</button>
 <button id="backMain">Назад</button>
