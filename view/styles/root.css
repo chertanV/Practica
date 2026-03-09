@@ -3,60 +3,88 @@
    Тёмная тема — общий стиль для всех страниц и компонентов
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 /* ─── RESET ─────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ─── ПЕРЕМЕННЫЕ ─────────────────────────────────────────────── */
-:root {
-  /* Цвета фона */
-  --bg:            #0f1117;
-  --surface:       #181c27;
-  --surface-2:     #1e2232;
+/* ─── ПЕРЕМЕННЫЕ (2 темы: светлая / тёмная) ───────────────────── */
+/* Тёмная тема (по умолчанию) — монохром + зелёный акцент */
+:root,
+[data-theme="dark"] {
+  --bg:            #0A0A0A;
+  --surface:       #171717;
+  --surface-2:     #262626;
 
-  /* Границы */
-  --border:        #252a38;
-  --border-light:  #2e3448;
+  --border:        #262626;
+  --border-light:  #404040;
 
-  /* Акцент */
-  --accent:        #4f8ef7;
-  --accent-dim:    rgba(79, 142, 247, 0.12);
-  --accent-hover:  #6aa0ff;
+  --accent:        #22C55E;
+  --accent-dim:    rgba(34, 197, 94, 0.15);
+  --accent-hover:  #4ADE80;
 
-  /* Статусные цвета */
-  --green:         #3ecf8e;
-  --green-dim:     rgba(62, 207, 142, 0.12);
-  --red:           #f76f6f;
-  --red-dim:       rgba(247, 111, 111, 0.12);
-  --yellow:        #f7c948;
-  --yellow-dim:    rgba(247, 201, 72, 0.12);
+  --green:         #22C55E;
+  --green-dim:     rgba(34, 197, 94, 0.15);
+  --red:           #EF4444;
+  --red-dim:       rgba(239, 68, 68, 0.15);
+  --yellow:        #EAB308;
+  --yellow-dim:    rgba(234, 179, 8, 0.15);
 
-  /* Текст */
-  --text:          #e2e8f8;
-  --muted:         #7a839e;
+  --text:          #D4D4D4;
+  --muted:         #737373;
 
-  /* Типографика */
-  --mono:          'IBM Plex Mono', monospace;
-  --sans:          'IBM Plex Sans', sans-serif;
+  --mono:          'JetBrains Mono', monospace;
+  --sans:          'Plus Jakarta Sans', sans-serif;
 
-  /* Скругления */
   --radius-sm:     4px;
   --radius:        6px;
   --radius-md:     8px;
   --radius-lg:     12px;
 
-  /* Тени */
-  --shadow:        0 4px 16px rgba(0, 0, 0, 0.3);
-  --shadow-lg:     0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow:        0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg:     0 8px 32px rgba(0, 0, 0, 0.5);
 
-  /* Переходы */
+  --row-hover:     rgba(255, 255, 255, 0.025);
+
   --transition:    .15s ease;
   --transition-md: .2s ease;
+  --theme-duration: 0.35s;
+}
+
+/* Светлая тема — светло-серый фон + индиго акцент */
+[data-theme="light"] {
+  --bg:            #F4F4F5;
+  --surface:       #FFFFFF;
+  --surface-2:     #F4F4F5;
+
+  --border:        #E4E4E7;
+  --border-light:  #D4D4D8;
+
+  --accent:        #6366F1;
+  --accent-dim:    rgba(99, 102, 241, 0.12);
+  --accent-hover:  #818CF8;
+
+  --green:         #22C55E;
+  --green-dim:     rgba(34, 197, 94, 0.12);
+  --red:           #EF4444;
+  --red-dim:       rgba(239, 68, 68, 0.12);
+  --yellow:        #EAB308;
+  --yellow-dim:    rgba(234, 179, 8, 0.12);
+
+  --text:          #18181B;
+  --muted:         #71717A;
+
+  --shadow:        0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg:     0 8px 32px rgba(0, 0, 0, 0.12);
+
+  --row-hover:     rgba(0, 0, 0, 0.04);
 }
 
 /* ─── BASE ───────────────────────────────────────────────────── */
-html { font-size: 14px; -webkit-font-smoothing: antialiased; }
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
 
 body {
   font-family: var(--sans);
@@ -66,6 +94,7 @@ body {
   display: flex;
   flex-direction: column;
   line-height: 1.5;
+  transition: background-color var(--theme-duration) ease, color var(--theme-duration) ease;
 }
 
 a {
@@ -91,6 +120,16 @@ main {
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
+  transition: background-color var(--theme-duration) ease, color var(--theme-duration) ease;
+}
+
+#app {
+  transition: background-color var(--theme-duration) ease, color var(--theme-duration) ease;
+}
+
+#app h1, #app h2, #app h3, #app h4, #app p, #app label,
+#app button, #app input, #app select, #app table, #app th, #app td {
+  transition: background-color var(--theme-duration) ease, color var(--theme-duration) ease, border-color var(--theme-duration) ease;
 }
 
 .page-header {
@@ -105,6 +144,7 @@ main {
   font-size: 22px;
   font-weight: 600;
   color: var(--text);
+  transition: color var(--theme-duration) ease;
 }
 
 .page-subtitle {
@@ -121,11 +161,54 @@ header {
   height: 56px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 24px;
   position: sticky;
   top: 0;
   z-index: 50;
+  transition: background-color var(--theme-duration) ease, border-color var(--theme-duration) ease;
 }
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.user-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-link {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  transition: color var(--transition-md), background var(--transition-md);
+}
+.nav-link:hover { color: var(--text); background: var(--accent-dim); }
+.nav-link.active { color: var(--accent); background: var(--accent-dim); }
 
 .logo {
   font-family: var(--mono);
@@ -134,6 +217,96 @@ header {
   color: var(--accent);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--theme-duration) ease;
+}
+.logo:hover { opacity: 0.9; }
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+.btn-logout:hover {
+  color: var(--text);
+  border-color: var(--border-light);
+  background: var(--border);
+}
+
+/* Кнопка смены темы */
+.btn-theme {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--muted);
+  transition: color var(--transition), border-color var(--transition), background var(--transition),
+    background-color var(--theme-duration) ease;
+}
+.btn-theme:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* Иконки: солнце в тёмной теме, луна в светлой */
+.theme-icon.sun { display: inline; }
+.theme-icon.moon { display: none; }
+[data-theme="light"] .theme-icon.sun { display: none; }
+[data-theme="light"] .theme-icon.moon { display: inline; }
+
+.login-theme-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+}
+
+/* ─── СТРАНИЦА ВХОДА ─────────────────────────────────────────── */
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 32px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-title {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.error-msg {
+  font-size: 13px;
+  color: var(--red);
+  margin: 0;
 }
 
 .nav-sep {
@@ -142,22 +315,13 @@ header {
   background: var(--border);
 }
 
-.nav-link {
-  font-size: 13px;
-  color: var(--muted);
-  text-decoration: none;
-  padding: 4px 0;
-  transition: color var(--transition-md);
-}
-.nav-link:hover  { color: var(--text); }
-.nav-link.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
-
 /* ─── КАРТОЧКИ / ПОВЕРХНОСТИ ──────────────────────────────────── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 20px 24px;
+  transition: background-color var(--theme-duration) ease, border-color var(--theme-duration) ease;
 }
 
 .card-header {
@@ -174,6 +338,7 @@ header {
   font-size: 14px;
   font-weight: 600;
   color: var(--text);
+  transition: color var(--theme-duration) ease;
 }
 
 .card-subtitle {
@@ -196,7 +361,8 @@ header {
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background var(--transition-md), transform .1s;
+  transition: background var(--transition-md), transform .1s,
+    background-color var(--theme-duration) ease, color var(--theme-duration) ease, border-color var(--theme-duration) ease;
   white-space: nowrap;
 }
 .btn:active { transform: scale(.97); }
@@ -272,7 +438,8 @@ header {
   font-size: 13px;
   padding: 9px 12px;
   outline: none;
-  transition: border-color var(--transition-md);
+  transition: border-color var(--transition-md),
+    background-color var(--theme-duration) ease, color var(--theme-duration) ease, border-color var(--theme-duration) ease;
   width: 100%;
 }
 .form-field textarea { resize: vertical; min-height: 80px; }
@@ -329,7 +496,8 @@ input[type="radio"] {
   font-size: 13px;
   padding: 9px 12px 9px 36px;
   outline: none;
-  transition: border-color var(--transition-md);
+  transition: border-color var(--transition-md),
+    background-color var(--theme-duration) ease, color var(--theme-duration) ease, border-color var(--theme-duration) ease;
 }
 .search-input::placeholder { color: var(--muted); }
 .search-input:focus { border-color: var(--accent); }
@@ -379,12 +547,13 @@ input[type="radio"] {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  transition: background-color var(--theme-duration) ease, border-color var(--theme-duration) ease;
 }
 
 table { width: 100%; border-collapse: collapse; }
 
 thead {
-  background: rgba(79, 142, 247, 0.05);
+  background: var(--accent-dim);
   border-bottom: 1px solid var(--border);
 }
 
@@ -409,7 +578,7 @@ tbody tr {
   transition: background var(--transition);
 }
 tbody tr:last-child { border-bottom: none; }
-tbody tr:hover    { background: rgba(255, 255, 255, 0.025); }
+tbody tr:hover    { background: var(--row-hover); }
 tbody tr.selected { background: var(--accent-dim); }
 
 td {
@@ -560,6 +729,7 @@ h4 { font-size: 14px; font-weight: 600; }
   width: 480px;
   max-width: 95vw;
   animation: slide-up .2s ease;
+  transition: background-color var(--theme-duration) ease, border-color var(--theme-duration) ease;
 }
 
 .modal-sm { width: 360px; }

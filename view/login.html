@@ -1,21 +1,21 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Авторизация</title>
-</head>
-<body>
-    <h2>Вход</h2>
-
-    <input type="email" id="email" placeholder="Email"><br><br>
-    <input type="password" id="password" placeholder="Пароль"><br><br>
-
-    <button id="loginBtn">Войти</button>
-
-    <p id="errorMessage" style="color:red;"></p>
-
-    <script type="module" src="../models/auth.js"></script>
-
-</body>
-</html>
+<div class="login-page">
+  <div class="login-card card">
+    <h2 class="login-title">Вход в систему</h2>
+    <form id="loginForm" class="login-form">
+      <div class="form-field">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="example@mail.com" required>
+      </div>
+      <div class="form-field">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" placeholder="••••••••" required>
+      </div>
+      <p id="errorMessage" class="error-msg hidden"></p>
+      <button type="submit" id="loginBtn" class="btn btn-primary w-full">Войти</button>
+      <p class="text-sm mt-8">
+        Нет аккаунта?
+        <a href="#" class="nav-link" data-route="register">Зарегистрироваться</a>
+      </p>
+    </form>
+  </div>
+</div>

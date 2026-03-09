@@ -1,6 +1,45 @@
-<h2>Главная страница</h2>
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Главная</h1>
+    <p class="page-subtitle">Краткий обзор продаж и быстрый доступ к разделам</p>
+  </div>
+</div>
 
-<button id="goReports">Перейти к отчётам</button>
-<button id="goImports">Импорт данных</button>
-<button id="goProducts">Товары</button>
-<button id="logoutBtn">Выйти</button>
+<div class="flex gap-16">
+  <div class="card" style="flex: 2;">
+    <div class="card-header">
+      <div>
+        <h3 class="card-title">Текущая сводка</h3>
+        <p class="card-subtitle">Показатели за всё время</p>
+      </div>
+    </div>
+    <div class="flex gap-16">
+      <div class="card" style="flex:1;">
+        <div class="card-subtitle">Общая выручка</div>
+        <h2 class="price mt-16" id="statSalesToday">0 ₽</h2>
+      </div>
+      <div class="card" style="flex:1;">
+        <div class="card-subtitle">Количество заказов</div>
+        <h2 class="price mt-16" id="statOrdersToday">0</h2>
+      </div>
+      <div class="card" style="flex:1;">
+        <div class="card-subtitle">Активных товаров</div>
+        <h2 class="price mt-16" id="statProductsCount">0</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="flex: 1;">
+    <div class="card-header">
+      <div>
+        <h3 class="card-title">Быстрые действия</h3>
+        <p class="card-subtitle">Часто используемые разделы</p>
+      </div>
+    </div>
+    <div class="flex flex-col gap-12">
+      <button id="goReports" class="btn btn-primary w-full">Перейти к отчётам</button>
+      <button id="goProducts" class="btn btn-secondary w-full">Перейти к товарам</button>
+      <button id="goImports" class="btn btn-secondary w-full">Импорт данных</button>
+    </div>
+  </div>
+</div>
