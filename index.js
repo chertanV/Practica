@@ -1,48 +1,117 @@
-import SoldGood from './models/soldGood.js';
-import ReportViewModel from './viewmodels/ReportViewModel.js';
 import router from './services/router.js';
 import { auth } from './services/firebaseConfig.js';
-import { signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { initLoginPage, initRegisterPage } from "./models/auth.js";
 
-const goods = [
-    new SoldGood("Ноутбук", "ООО Альфа", 4.5, "2026-01-10", 50000),
-    new SoldGood("Мышь", "ООО Альфа", 4, "2026-02-15", 1500),
-    new SoldGood("Клавиатура", "ООО Бета", 3, "2026-03-01", 3000),
-    new SoldGood("Ноутбук", "ООО Бета", 5, "2026-03-20", 55000),
-];
+import initImportPage from "./models/importPage.js";
+import initMainPage from "./models/mainPage.js";
+import initProductsPage from "./models/productsPage.js";
+import { initReportsPage } from "./models/reportPage.js";
 
-const reportVM = new ReportViewModel(goods);
+const PROTECTED_ROUTES = ['main', 'reports', 'imports', 'products'];
 
-// Загружаем главную страницу при старте
-router.navigate('main');
+function updateHeaderAuthState(user) {
+  const isAuthed = !!user;
+  const authedEls = document.querySelectorAll('[data-auth="authed"]');
+  const guestEls = document.querySelectorAll('[data-auth="guest"]');
+  authedEls.forEach(el => el.classList.toggle('hidden', !isAuthed));
+  guestEls.forEach(el => el.classList.toggle('hidden', isAuthed));
 
-// Слушаем смену страницы
+  const nameEl = document.getElementById('userName');
+  if (nameEl) {
+    if (isAuthed) {
+      const email = user.email || '';
+      const nickname = user.displayName || email.split('@')[0] || 'Пользователь';
+      nameEl.textContent = nickname;
+    } else {
+      nameEl.textContent = '';
+    }
+  }
+}
+
+// ─── Навигация по клику на ссылки в шапке ─────────────────────
+document.addEventListener("click", (e) => {
+  const link = e.target.closest("a[data-route]");
+  if (!link) return;
+  e.preventDefault();
+  const route = link.dataset.route;
+  if (route === "login" || route === "register") {
+    router.navigate(route);
+    return;
+  }
+  if (PROTECTED_ROUTES.includes(route) && !auth.currentUser) {
+    router.navigate("login");
+    return;
+  }
+  router.navigate(route);
+}, true);
+
+// ─── Выход ────────────────────────────────────────────────────
+document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+  await signOut(auth);
+  router.navigate("login");
+});
+
+// ─── Защищённые маршруты: редирект на логин если не авторизован ─
+function requireAuth(route) {
+  if (PROTECTED_ROUTES.includes(route) && !auth.currentUser) {
+    router.navigate("login");
+    return false;
+  }
+  return true;
+}
+
+// ─── Старт приложения после инициализации auth ─────────────────
+onAuthStateChanged(auth, (user) => {
+  updateHeaderAuthState(user);
+  if (user) {
+    if (router.currentPage === "login" || !router.currentPage) {
+      router.navigate("main");
+    }
+  } else {
+    if (router.currentPage && PROTECTED_ROUTES.includes(router.currentPage)) {
+      router.navigate("login");
+    } else if (!router.currentPage) {
+      router.navigate("login");
+    }
+  }
+});
+
+// ─── Обработка загруженных страниц ─────────────────────────────
 document.addEventListener("pageChanged", (event) => {
+  const page = event.detail;
 
-    if (event.detail === 'main') {
+  if (page === "login") {
+    initLoginPage(() => router.navigate("main"));
+    return;
+  }
 
-        document.getElementById("goReports").addEventListener("click", () => router.navigate("reports"));
-    
-        document.getElementById("logoutBtn").addEventListener("click", async () => {
-            await signOut(auth);
-            window.location.href = "./view/login.html";
-        })
-    }
+  if (page === "register") {
+    initRegisterPage(() => router.navigate("main"));
+    return;
+  }
 
-    if (event.detail === 'reports') {
-        document.getElementById("backMain").addEventListener("click", () => router.navigate("main"));
-    
-        document.getElementById("generateReport").addEventListener("click", async () => {
-            
-            const minRating = Number(document.getElementById("minRating").value);
-            const startDate = new Date(document.getElementById("startDate").value);
-            const endDate = new Date(document.getElementById("endDate").value);
+  if (!requireAuth(page)) return;
 
-            await reportVM.exportReport({
-                minRating,
-                startDate,
-                endDate
-            });
-        });
-    }
+  if (page === "main") {
+    document.getElementById("goReports")?.addEventListener("click", () => router.navigate("reports"));
+    document.getElementById("goImports")?.addEventListener("click", () => router.navigate("imports"));
+    document.getElementById("goProducts")?.addEventListener("click", () => router.navigate("products"));
+    initMainPage?.();
+  }
+
+  if (page === "reports") {
+    document.getElementById("backMain")?.addEventListener("click", () => router.navigate("main"));
+    initReportsPage?.();
+  }
+
+  if (page === "imports") {
+    document.getElementById("backMain")?.addEventListener("click", () => router.navigate("main"));
+    initImportPage?.();
+  }
+
+  if (page === "products") {
+    document.getElementById("backMain")?.addEventListener("click", () => router.navigate("main"));
+    initProductsPage?.();
+  }
 });
