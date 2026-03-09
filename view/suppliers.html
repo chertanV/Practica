@@ -1,0 +1,74 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Поставщики</h1>
+    <p class="page-subtitle">Справочник поставщиков с контактными данными</p>
+  </div>
+</div>
+
+<div class="card mb-20">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">Поставщики</h3>
+      <p class="card-subtitle">ID, ФИО, контактное лицо, номер договора, адрес</p>
+    </div>
+    <div class="btn-group">
+      <button id="addSupplierBtn" class="btn btn-primary">+ Новый поставщик</button>
+      <button id="backMain" class="btn btn-secondary">Назад</button>
+    </div>
+  </div>
+</div>
+
+<div class="results-info">
+  Найдено поставщиков: <span id="suppliersCount">0</span>
+</div>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>ФИО</th>
+        <th>Контактное лицо</th>
+        <th>Номер договора</th>
+        <th>Адрес</th>
+        <th>Действия</th>
+      </tr>
+    </thead>
+    <tbody id="suppliersTable"></tbody>
+  </table>
+</div>
+
+<div class="modal-overlay" id="supplierModalOverlay">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 class="modal-title" id="supplierModalTitle">Новый поставщик</h3>
+      <button type="button" class="modal-close" id="supplierModalClose">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="supplierFullName">ФИО / Название организации</label>
+          <input type="text" id="supplierFullName" placeholder="Иванов Иван Иванович или ООО Рога и копыта" required>
+        </div>
+        <div class="form-field">
+          <label for="supplierContact">Контактное лицо</label>
+          <input type="text" id="supplierContact" placeholder="Петров П.П.">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="supplierContract">Номер договора</label>
+          <input type="text" id="supplierContract" placeholder="Д-2024-001">
+        </div>
+        <div class="form-field">
+          <label for="supplierAddress">Адрес поставщика</label>
+          <input type="text" id="supplierAddress" placeholder="г. Москва, ул. Примерная, д. 1">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" id="supplierModalCancel">Отмена</button>
+      <button type="button" class="btn-save" id="supplierModalSave">Сохранить</button>
+    </div>
+  </div>
+</div>

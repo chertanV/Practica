@@ -1,0 +1,74 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Отчёты</h1>
+    <p class="page-subtitle">Отчёты выводятся в таблице на странице и экспортируются в Excel</p>
+  </div>
+</div>
+
+<div class="card mb-20">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">Фильтры отчёта</h3>
+      <p class="card-subtitle">Задайте период и минимальные продажи</p>
+    </div>
+  </div>
+  <div class="modal-body" style="padding: 16px 24px 20px;">
+    <div class="form-field mb-12">
+      <label for="reportType">Тип отчёта</label>
+      <select id="reportType">
+        <option value="detail">Детальный отчёт (период, товар, поставщик, цены, выручка)</option>
+        <option value="counterparty">По контрагентам (сводка по поставщикам)</option>
+      </select>
+    </div>
+    <div class="form-row-3">
+      <div class="form-field">
+        <label for="startDate">Начало периода</label>
+        <input type="date" id="startDate">
+      </div>
+      <div class="form-field">
+        <label for="endDate">Конец периода</label>
+        <input type="date" id="endDate">
+      </div>
+      <div class="form-field">
+        <label for="supplierFilter">Поставщик</label>
+        <select id="supplierFilter">
+          <option value="">Все поставщики</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row-3">
+      <div class="form-field">
+        <label for="minSales">Мин. продаж (шт)</label>
+        <input type="number" id="minSales" value="0" min="0">
+      </div>
+    </div>
+    <div class="btn-group mt-16">
+      <button id="generateReport" class="btn btn-primary">Сгенерировать отчёт</button>
+      <button id="exportExcel" class="btn btn-secondary">Экспорт Excel</button>
+      <button id="backMain" class="btn btn-secondary">Назад</button>
+    </div>
+  </div>
+</div>
+
+<div class="results-info">
+  Результаты отчёта: <span id="reportCount">0</span> позиций
+</div>
+
+<p id="reportEmpty" class="alert alert-info mt-8">
+  Нет данных о продажах. На странице <strong>Импорт</strong> выберите режим «Продажи» и загрузите Excel с колонками: Название, Поставщик, Продажи, Дата продажи, Цена.
+</p>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Название</th>
+        <th>Поставщик</th>
+        <th>Продажи</th>
+        <th>Цена</th>
+      </tr>
+    </thead>
+    <tbody id="reportTable"></tbody>
+  </table>
+</div>

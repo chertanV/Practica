@@ -1,0 +1,115 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Продажи</h1>
+    <p class="page-subtitle">Журнал продаж с фильтрами по периоду</p>
+  </div>
+</div>
+
+<div class="card mb-20">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">Фильтры</h3>
+      <p class="card-subtitle">Период, поиск по товару или продавцу</p>
+    </div>
+    <div class="btn-group">
+      <button id="newSaleBtn" class="btn btn-primary">+ Новая продажа</button>
+      <button id="backMain" class="btn btn-secondary">Назад</button>
+    </div>
+  </div>
+  <div class="modal-body" style="padding: 16px 24px;">
+    <div class="form-row-3">
+      <div class="form-field">
+        <label for="salesStartDate">Начало периода</label>
+        <input type="datetime-local" id="salesStartDate">
+      </div>
+      <div class="form-field">
+        <label for="salesEndDate">Конец периода</label>
+        <input type="datetime-local" id="salesEndDate">
+      </div>
+      <div class="form-field">
+        <label for="salesSearch">Поиск</label>
+        <input type="text" id="salesSearch" placeholder="Товар или продавец">
+      </div>
+    </div>
+    <button id="applySalesFilter" class="btn btn-secondary mt-12">Применить</button>
+  </div>
+</div>
+
+<div class="results-info">
+  Найдено продаж: <span id="salesCount">0</span>
+</div>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>№</th>
+        <th>Наименование</th>
+        <th>Кол-во</th>
+        <th>Полная цена</th>
+        <th>Скидка</th>
+        <th>Цена со скидкой</th>
+        <th>Способ оплаты</th>
+        <th>ФИО продавца</th>
+        <th>Дата и время</th>
+      </tr>
+    </thead>
+    <tbody id="salesTable"></tbody>
+  </table>
+</div>
+
+<div class="modal-overlay" id="newSaleModalOverlay">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 class="modal-title">Новая продажа</h3>
+      <button type="button" class="modal-close" id="newSaleModalClose">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label for="saleProductSelect">Товар</label>
+        <select id="saleProductSelect">
+          <option value="">— Выберите товар —</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="saleQuantity">Количество</label>
+          <input type="number" id="saleQuantity" min="1" value="1">
+        </div>
+        <div class="form-field">
+          <label for="saleFullPrice">Полная цена (за ед.)</label>
+          <input type="number" id="saleFullPrice" min="0" step="0.01" placeholder="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="saleDiscount">Скидка (%)</label>
+          <input type="number" id="saleDiscount" min="0" max="100" value="0" step="0.01">
+        </div>
+        <div class="form-field">
+          <label for="salePaymentMethod">Способ оплаты</label>
+          <select id="salePaymentMethod">
+            <option value="cash">Наличные</option>
+            <option value="card">Карта</option>
+            <option value="transfer">Перевод</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="saleSellerName">ФИО продавца</label>
+          <input type="text" id="saleSellerName" placeholder="Иванов И.И.">
+        </div>
+        <div class="form-field">
+          <label for="saleDateTime">Дата и время</label>
+          <input type="datetime-local" id="saleDateTime">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" id="newSaleModalCancel">Отмена</button>
+      <button type="button" class="btn-save" id="newSaleModalSave">Оформить продажу</button>
+    </div>
+  </div>
+</div>
