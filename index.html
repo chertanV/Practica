@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- index.html — оболочка SPA: шапка (навигация, авторизация, роли), контейнер #app для подгружаемых страниц, тема -->
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система продаж</title>
+    <link rel="stylesheet" href="view/styles/root.css">
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="header-left">
+            <a href="#" class="logo" data-route="main">СИСТЕМА ПРОДАЖ</a>
+            <nav class="nav-links hidden" data-auth="authed">
+                <a href="#" class="nav-link" data-route="main">Главная</a>
+                <a href="#" class="nav-link" data-route="reports" data-role="admin">Отчёты</a>
+                <a href="#" class="nav-link" data-route="sales">Продажи</a>
+                <a href="#" class="nav-link" data-route="products">Товары</a>
+                <a href="#" class="nav-link" data-route="suppliers" data-role="admin">Поставщики</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="user-block hidden" data-auth="authed">
+                <span id="userName" class="user-name"></span>
+                <button id="logoutBtn" class="btn-logout" type="button">Выйти</button>
+            </div>
+            <div class="guest-block" data-auth="guest">
+                <a href="#" class="nav-link" data-route="login">Войти</a>
+                <a href="#" class="nav-link" data-route="register">Регистрация</a>
+            </div>
+            <button id="themeToggle" class="btn-theme" type="button" title="Сменить тему" aria-label="Сменить тему">
+                <span class="theme-icon sun" aria-hidden="true">☀</span>
+                <span class="theme-icon moon" aria-hidden="true">☽</span>
+            </button>
+        </div>
+    </header>
+
+    <main id="app"></main>
+
+    <script>
+      (function() {
+        var theme = localStorage.getItem('app-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        var btn = document.getElementById('themeToggle');
+        if (btn) btn.addEventListener('click', function() {
+          theme = theme === 'light' ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          localStorage.setItem('app-theme', theme);
+        });
+      })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script type="module" src="index.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!-- sales.html — журнал чеков (таблица), модалка «Новый чек» (позиции + общие поля), модалка «Добавить позицию» -->
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Продажи</h1>
+    <p class="page-subtitle">Журнал чеков с фильтрами по периоду. Один чек = список проданных товаров за раз</p>
+  </div>
+</div>
+
+<div class="card mb-20">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">Фильтры</h3>
+      <p class="card-subtitle">Период, поиск по товару или продавцу</p>
+    </div>
+    <div class="btn-group">
+      <button id="newReceiptBtn" class="btn btn-primary">+ Новый чек</button>
+      <button id="backMain" class="btn btn-secondary">Назад</button>
+    </div>
+  </div>
+  <div class="modal-body" style="padding: 16px 24px;">
+    <div class="form-row-3">
+      <div class="form-field">
+        <label for="salesStartDate">Начало периода</label>
+        <input type="date" id="salesStartDate">
+      </div>
+      <div class="form-field">
+        <label for="salesEndDate">Конец периода</label>
+        <input type="date" id="salesEndDate">
+      </div>
+      <div class="form-field">
+        <label for="salesSearch">Поиск</label>
+        <input type="text" id="salesSearch" placeholder="Товар или продавец">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="results-info">
+  Найдено чеков: <span id="salesCount">0</span>
+</div>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>№ чека</th>
+        <th>Дата</th>
+        <th>Продавец</th>
+        <th>Способ оплаты</th>
+        <th>Позиций</th>
+        <th>Сумма чека</th>
+        <th>Действия</th>
+      </tr>
+    </thead>
+    <tbody id="salesTable"></tbody>
+  </table>
+</div>
+
+<!-- Модалка: новый чек (список позиций) -->
+<div class="modal-overlay" id="receiptModalOverlay">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 class="modal-title">Новый чек</h3>
+      <button type="button" class="modal-close" id="receiptModalClose">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="receiptDate">Дата продажи</label>
+          <input type="date" id="receiptDate">
+        </div>
+        <div class="form-field">
+          <label for="receiptSellerName">ФИО продавца</label>
+          <input type="text" id="receiptSellerName" placeholder="Иванов И.И.">
+        </div>
+        <div class="form-field">
+          <label for="receiptPaymentMethod">Способ оплаты</label>
+          <select id="receiptPaymentMethod">
+            <option value="cash">Наличные</option>
+            <option value="card">Карта</option>
+          </select>
+        </div>
+      </div>
+      <h4 class="mt-16 mb-8">Позиции чека</h4>
+      <div class="table-wrapper mb-12">
+        <table>
+          <thead>
+            <tr>
+              <th>Товар</th>
+              <th>Кол-во</th>
+              <th>Цена за ед.</th>
+              <th>Скидка %</th>
+              <th>Сумма</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="receiptItemsTable"></tbody>
+        </table>
+      </div>
+      <p id="receiptEmpty" class="text-muted text-sm">Добавьте хотя бы одну позицию</p>
+      <p class="text-sm"><strong>Итого по чеку: <span id="receiptTotal">0</span> ₽</strong></p>
+      <button type="button" id="addReceiptItemBtn" class="btn btn-secondary mt-12">+ Добавить позицию</button>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" id="receiptModalCancel">Отмена</button>
+      <button type="button" class="btn-save" id="receiptModalSave">Оформить чек</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка: добавить позицию в чек -->
+<div class="modal-overlay" id="addItemModalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Добавить позицию</h3>
+      <button type="button" class="modal-close" id="addItemModalClose">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-field">
+        <label for="itemProductSelect">Товар</label>
+        <select id="itemProductSelect">
+          <option value="">— Выберите товар —</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="itemQuantity">Количество</label>
+          <input type="number" id="itemQuantity" min="1" value="1">
+        </div>
+        <div class="form-field">
+          <label for="itemFullPrice">Цена за ед.</label>
+          <input type="number" id="itemFullPrice" min="0" step="0.01" placeholder="0">
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="itemDiscount">Скидка (%)</label>
+        <input type="number" id="itemDiscount" min="0" max="100" value="0" step="0.01">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" id="addItemModalCancel">Отмена</button>
+      <button type="button" class="btn-save" id="addItemModalAdd">Добавить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка: просмотр чека (позиции) -->
+<div class="modal-overlay" id="receiptViewModalOverlay">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 class="modal-title">Чек</h3>
+      <button type="button" class="modal-close" id="receiptViewModalClose">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p class="text-sm mb-8">
+        <span class="text-muted">№ чека:</span> <span id="viewReceiptNumber"></span><br>
+        <span class="text-muted">Дата:</span> <span id="viewReceiptDate"></span><br>
+        <span class="text-muted">Продавец:</span> <span id="viewReceiptSeller"></span><br>
+        <span class="text-muted">Способ оплаты:</span> <span id="viewReceiptPayment"></span>
+      </p>
+      <h4 class="mt-8 mb-8">Товары в чеке</h4>
+      <div class="table-wrapper mb-8">
+        <table>
+          <thead>
+            <tr>
+              <th>Товар</th>
+              <th>Кол-во</th>
+              <th>Цена за ед.</th>
+              <th>Скидка %</th>
+              <th>Сумма</th>
+            </tr>
+          </thead>
+          <tbody id="receiptViewItemsTable"></tbody>
+        </table>
+      </div>
+      <p class="text-sm"><strong>Итого по чеку: <span id="viewReceiptTotal">0</span> ₽</strong></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" id="receiptViewModalCloseBottom">Закрыть</button>
+    </div>
+  </div>
+</div>
