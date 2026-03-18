@@ -1,3 +1,4 @@
+<!-- main.html — шаблон главной: сводка (выручка, заказы, товары в наличии), блок «Нет в наличии», кнопки переходов -->
 <div class="page-header">
   <div>
     <h1 class="page-title">Главная</h1>
@@ -37,9 +38,24 @@
       </div>
     </div>
     <div class="flex flex-col gap-12">
-      <button id="goReports" class="btn btn-primary w-full">Перейти к отчётам</button>
-      <button id="goProducts" class="btn btn-secondary w-full">Перейти к товарам</button>
-      <button id="goImports" class="btn btn-secondary w-full">Импорт данных</button>
+      <button id="goReports" class="btn btn-primary w-full" data-role="admin">Перейти к отчётам</button>
+      <button id="goSales" class="btn btn-secondary w-full">Продажи</button>
+      <button id="goSuppliers" class="btn btn-secondary w-full" data-role="admin">Поставщики</button>
+      <button id="goImports" class="btn btn-secondary w-full">Товары и импорт</button>
     </div>
   </div>
 </div>
+
+<div class="card mt-16" id="outOfStockCard">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">Нет в наличии</h3>
+      <p class="card-subtitle">Товары с нулевым остатком — требуется пополнение</p>
+    </div>
+    <a href="#" class="nav-link" data-route="products">К товарам →</a>
+  </div>
+  <div id="outOfStockList" class="out-of-stock-list">
+    <p class="text-muted text-sm">Загрузка...</p>
+  </div>
+</div>
+
