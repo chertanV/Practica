@@ -1,0 +1,34 @@
+<!-- waiting.html — страница ожидания назначения роли пользователю -->
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Ожидание доступа</h1>
+    <p class="page-subtitle">Роль ещё не назначена. Доступ появится после обновления в базе.</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div>
+      <h3 class="card-title">Пока нет прав</h3>
+      <p class="card-subtitle">Пользователь успешно авторизован, но не имеет роли.</p>
+    </div>
+  </div>
+
+  <div class="modal-body" style="padding: 16px 24px 20px;">
+    <div id="waitingAlert" class="alert alert-info">
+      <div>
+        <div style="font-weight: 600; margin-bottom: 6px;">Ожидайте назначения роли администратором</div>
+        <div class="text-sm">
+          Ваш email: <strong id="waitingEmail">—</strong>
+        </div>
+        <div class="text-sm mt-8" id="waitingHint">Проверьте роль позже или нажмите кнопку «Проверить».</div>
+      </div>
+    </div>
+
+    <div class="btn-group mt-16">
+      <button type="button" class="btn btn-primary" id="checkRoleBtn">Проверить</button>
+      <button type="button" class="btn btn-secondary" id="logoutFromWaitingBtn">Выйти</button>
+    </div>
+  </div>
+</div>
+
