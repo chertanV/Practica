@@ -1,0 +1,51 @@
+INSERT INTO Departments (department_id, department_name, manager_fio, phone, daily_sales_volume) VALUES
+(1, 'Бытовая техника', 'Иванов Пётр Сергеевич', '+373-777-11-22', 45000.00),
+(2, 'Продукты питания', 'Петрова Анна Викторовна', '+373-777-33-44', 62000.00),
+(3, 'Одежда и обувь', 'Сидоров Игорь Олегович', '+373-777-55-66', 38000.00),
+(4, 'Косметика', 'Кузнецова Мария Дмитриевна', '+373-777-77-88', 27000.00),
+(5, 'Канцтовары', 'Фёдоров Андрей Николаевич', '+373-777-99-00', 19000.00),
+(6, 'Электроника', 'Смирнова Ольга Петровна', '+373-777-12-34', 51000.00);
+
+INSERT INTO Products (product_article, product_name, unit, retail_price) VALUES
+(1001, 'Холодильник Atlant', 'шт', 12500.00),
+(1002, 'Хлеб белый', 'шт', 15.50),
+(1003, 'Молоко 1л', 'шт', 22.00),
+(1004, 'Куртка зимняя', 'шт', 1800.00),
+(1005, 'Крем для рук', 'шт', 65.00),
+(1006, 'Тетрадь 48 листов', 'шт', 12.00),
+(1007, 'Смартфон Samsung', 'шт', 7200.00),
+(1008, 'Наушники беспроводные', 'шт', 950.00);
+
+INSERT INTO Sales (sale_id, product_article, department_id, sale_date, quantity) VALUES
+(1, 1001, 1, '2026-06-20', 2),
+(2, 1007, 6, '2026-06-20', 5),
+(3, 1002, 2, '2026-06-20', 40),
+(4, 1003, 2, '2026-06-21', 60),
+(5, 1004, 3, '2026-06-21', 8),
+(6, 1005, 4, '2026-06-21', 15),
+(7, 1006, 5, '2026-06-22', 25),
+(8, 1008, 6, '2026-06-22', 10),
+(9, 1001, 1, '2026-06-22', 1),
+(10, 1007, 6, '2026-06-23', 3);
+
+
+SELECT s.sale_id, p.product_name, s.quantity, s.sale_date
+FROM Sales s
+JOIN Products p ON s.product_article = p.product_article
+JOIN Departments d ON s.department_id = d.department_id
+WHERE d.department_name = 'Электроника' AND s.sale_date = '2026-06-20';
+
+SELECT d.department_name, SUM(s.quantity) AS total_quantity
+FROM Sales s
+JOIN Departments d ON s.department_id = d.department_id
+GROUP BY d.department_name;
+
+
+SELECT d.department_name,
+       COUNT(s.sale_id) AS sales_count,
+       SUM(s.quantity * p.retail_price) AS total_revenue
+FROM Sales s
+JOIN Products p ON s.product_article = p.product_article
+JOIN Departments d ON s.department_id = d.department_id
+GROUP BY d.department_name
+ORDER BY total_revenue DESC;
