@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кабинет психолога — система учёта</title>
+<style>
+  :root{
+    --bg:#F4F2EC;
+    --panel:#FFFFFF;
+    --ink:#2B2E2A;
+    --muted:#767A72;
+    --line:#E3E0D6;
+    --sage:#3F5D52;
+    --sage-dk:#2C4339;
+    --sage-lt:#E7EEE9;
+    --lav:#8C7FB8;
+    --lav-lt:#EFEAFA;
+    --warn:#B65C4A;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Inter",-apple-system,Segoe UI,Roboto,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+  }
+  h1,h2,h3,.brand{
+    font-family:"Georgia","Iowan Old Style",serif;
+  }
+  .app{display:flex;min-height:100vh;}
+  .sidebar{
+    width:236px;
+    background:var(--sage-dk);
+    color:#EFEFE9;
+    padding:22px 16px;
+    flex-shrink:0;
+  }
+  .brand{
+    font-size:20px;
+    font-weight:600;
+    color:#fff;
+    margin:0 0 4px 4px;
+    letter-spacing:.2px;
+  }
+  .brand-sub{
+    font-size:11px;
+    color:#A9BDB2;
+    margin:0 0 28px 4px;
+    text-transform:uppercase;
+    letter-spacing:1.2px;
+  }
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:8px;
+    color:#D9E2DC;
+    font-size:14.5px;
+    cursor:pointer;
+    margin-bottom:4px;
+    transition:background .15s;
+  }
+  .nav-item:hover{background:rgba(255,255,255,.08);}
+  .nav-item.active{background:var(--lav);color:#fff;}
+  .nav-dot{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.65;flex-shrink:0;}
+  .main{flex:1;padding:28px 36px;max-width:1180px;}
+  .topbar{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin-bottom:22px;flex-wrap:wrap;gap:10px;
+  }
+  .topbar h1{font-size:26px;margin:0;color:var(--sage-dk);}
+  .topbar .meta{font-size:13px;color:var(--muted);}
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 22px;
+    margin-bottom:20px;
+  }
+  .panel-head{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:14px;flex-wrap:wrap;gap:8px;
+  }
+  .panel-head h2{font-size:16px;margin:0;color:var(--sage-dk);}
+  .btn{
+    background:var(--sage);
+    color:#fff;border:none;border-radius:7px;
+    padding:8px 14px;font-size:13.5px;cursor:pointer;
+    font-family:inherit;
+  }
+  .btn:hover{background:var(--sage-dk);}
+  .btn.secondary{background:transparent;color:var(--sage);border:1px solid var(--sage);}
+  .btn.secondary:hover{background:var(--sage-lt);}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{
+    text-align:left;font-weight:600;color:var(--muted);
+    text-transform:uppercase;font-size:11px;letter-spacing:.4px;
+    padding:8px 10px;border-bottom:2px solid var(--line);
+  }
+  td{padding:9px 10px;border-bottom:1px solid var(--line);}
+  tr:hover td{background:var(--sage-lt);}
+  .tag{
+    display:inline-block;padding:2px 9px;border-radius:20px;
+    font-size:11.5px;background:var(--lav-lt);color:#5C4F8C;
+  }
+  .tag.warn{background:#F6E3DD;color:var(--warn);}
+  .tag.ok{background:var(--sage-lt);color:var(--sage-dk);}
+  .row-actions a{font-size:12.5px;color:var(--lav);margin-right:10px;cursor:pointer;text-decoration:none;}
+  .stats{display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap;}
+  .stat{
+    flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);
+    border-radius:var(--radius);padding:16px 18px;
+  }
+  .stat .num{font-size:26px;font-family:"Georgia",serif;color:var(--sage-dk);}
+  .stat .lab{font-size:12px;color:var(--muted);margin-top:2px;}
+  .view{display:none;}
+  .view.active{display:block;}
+  .timeline{display:flex;align-items:center;overflow-x:auto;padding:10px 2px 4px;}
+  .tl-item{display:flex;flex-direction:column;align-items:center;min-width:108px;position:relative;}
+  .tl-item:not(:last-child)::after{
+    content:"";position:absolute;top:7px;left:60%;width:90%;height:2px;background:var(--line);
+  }
+  .tl-dot{width:14px;height:14px;border-radius:50%;background:var(--lav);border:3px solid var(--lav-lt);z-index:1;}
+  .tl-time{font-size:11.5px;color:var(--muted);margin-top:6px;}
+  .tl-name{font-size:12.5px;font-weight:600;margin-top:2px;text-align:center;}
+  .overlay{
+    position:fixed;inset:0;background:rgba(20,24,21,.45);
+    display:none;align-items:center;justify-content:center;z-index:50;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:#fff;border-radius:var(--radius);padding:22px 24px;
+    width:380px;max-width:90vw;
+  }
+  .modal h3{margin:0 0 14px;font-size:16px;color:var(--sage-dk);}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;}
+  .field input,.field select{
+    width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;
+    font-size:13.5px;font-family:inherit;
+  }
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px;}
+  .note{font-size:12px;color:var(--muted);margin-top:10px;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <p class="brand">Кабинет психолога</p>
+    <p class="brand-sub">Система учёта · макет</p>
+    <div class="nav-item active" data-view="dashboard"><span class="nav-dot"></span>Дашборд</div>
+    <div class="nav-item" data-view="clients"><span class="nav-dot"></span>Клиенты</div>
+    <div class="nav-item" data-view="psych"><span class="nav-dot"></span>Психологи</div>
+    <div class="nav-item" data-view="directions"><span class="nav-dot"></span>Направления</div>
+    <div class="nav-item" data-view="schedule"><span class="nav-dot"></span>Расписание приёма</div>
+    <div class="nav-item" data-view="consults"><span class="nav-dot"></span>Консультации</div>
+  </aside>
+
+  <main class="main">
+
+    <section class="view active" id="view-dashboard">
+      <div class="topbar">
+        <h1>Дашборд</h1>
+        <div class="meta">29 июня 2026 · понедельник</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num">6</div><div class="lab">клиентов в базе</div></div>
+        <div class="stat"><div class="num">5</div><div class="lab">психологов</div></div>
+        <div class="stat"><div class="num">5</div><div class="lab">направлений помощи</div></div>
+        <div class="stat"><div class="num">7</div><div class="lab">консультаций всего</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Приём на сегодня — 29.06.2026</h2></div>
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">09:00–13:00</div><div class="tl-name">Иванова М.С.</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-time">10:00–14:00</div><div class="tl-name">Сорокина Е.И.</div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Последние консультации</h2></div>
+        <table>
+          <thead><tr><th>№</th><th>Дата</th><th>Клиент</th><th>Психолог</th><th>Результат</th></tr></thead>
+          <tbody>
+            <tr><td>7</td><td>02.07.2026</td><td>Волкова Ю.А.</td><td>Сорокина Е.И.</td><td>Краткая консультация по запросу</td></tr>
+            <tr><td>6</td><td>01.07.2026</td><td>Сидоров И.П.</td><td>Иванова М.С.</td><td>Повторный приём, прогресс отмечен</td></tr>
+            <tr><td>5</td><td>01.07.2026</td><td>Тарасов М.О.</td><td>Гончарова О.П.</td><td>Консультация завершена успешно</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-clients">
+      <div class="topbar"><h1>Клиенты</h1><div class="meta">код · ФИО · телефон · email</div></div>
+      <div class="panel">
+        <div class="panel-head"><h2>Список клиентов</h2><button class="btn" onclick="openModal('client')">+ Добавить клиента</button></div>
+        <table>
+          <thead><tr><th>Код</th><th>ФИО</th><th>Дата рождения</th><th>Телефон</th><th>Email</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Сидоров Иван Петрович</td><td>12.04.1990</td><td>+373 555 12 34</td><td>sidorov@mail.com</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>2</td><td>Кузнецова Анна Олеговна</td><td>23.09.1985</td><td>+373 555 56 78</td><td>kuznetsova@mail.com</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>3</td><td>Лебедев Сергей Викторович</td><td>15.01.1995</td><td>+373 555 90 11</td><td>lebedev@mail.com</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>4</td><td>Новикова Дарья Игоревна</td><td>30.06.2000</td><td>+373 555 22 33</td><td>—</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>5</td><td>Тарасов Михаил Олегович</td><td>02.11.1978</td><td>+373 555 44 55</td><td>tarasov@mail.com</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>6</td><td>Волкова Юлия Андреевна</td><td>08.03.1992</td><td>+373 555 66 77</td><td>volkova@mail.com</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-psych">
+      <div class="topbar"><h1>Психологи</h1><div class="meta">код · ФИО · квалификация · стаж · телефон</div></div>
+      <div class="panel">
+        <div class="panel-head"><h2>Список психологов</h2><button class="btn" onclick="openModal('psych')">+ Добавить психолога</button></div>
+        <table>
+          <thead><tr><th>Код</th><th>ФИО</th><th>Квалификация</th><th>Стаж</th><th>Телефон</th><th>Направления</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Иванова Мария Сергеевна</td><td>Высшая категория</td><td>8 лет</td><td>+373 777 11 22</td><td><span class="tag">Семейная</span> <span class="tag">Отношений</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+            <tr><td>2</td><td>Петров Алексей Викторович</td><td>Первая категория</td><td>5 лет</td><td>+373 777 33 44</td><td><span class="tag">Детская</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+            <tr><td>3</td><td>Сорокина Елена Игоревна</td><td>Высшая категория</td><td>12 лет</td><td>+373 777 55 66</td><td><span class="tag">КПТ</span> <span class="tag">Кризисная</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+            <tr><td>4</td><td>Морозов Дмитрий Андреевич</td><td>Вторая категория</td><td>3 года</td><td>+373 777 77 88</td><td><span class="tag">Детская</span> <span class="tag">Кризисная</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+            <tr><td>5</td><td>Гончарова Ольга Петровна</td><td>Высшая категория</td><td>10 лет</td><td>+373 777 99 00</td><td><span class="tag">Семейная</span> <span class="tag">Отношений</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+          </tbody>
+        </table>
+        <p class="note">Связь «Психологи — Направления» реализована через связующую таблицу психологи_направления (M:N).</p>
+      </div>
+    </section>
+
+    <section class="view" id="view-directions">
+      <div class="topbar"><h1>Направления психологической помощи</h1><div class="meta">код · наименование</div></div>
+      <div class="panel">
+        <div class="panel-head"><h2>Справочник направлений</h2><button class="btn" onclick="openModal('direction')">+ Добавить направление</button></div>
+        <table>
+          <thead><tr><th>Код</th><th>Наименование</th><th>Психологов на направлении</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Семейная психология</td><td>2</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>2</td><td>Детская психология</td><td>2</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>3</td><td>Когнитивно-поведенческая терапия</td><td>1</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>4</td><td>Кризисная психология</td><td>2</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>5</td><td>Психология отношений</td><td>2</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-schedule">
+      <div class="topbar"><h1>Расписание приёма</h1><div class="meta">код записи · дата · время · психолог</div></div>
+      <div class="panel">
+        <div class="panel-head"><h2>Записи расписания</h2><button class="btn" onclick="openModal('schedule')">+ Добавить запись</button></div>
+        <table>
+          <thead><tr><th>Код</th><th>Дата приёма</th><th>Начало</th><th>Окончание</th><th>Психолог</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>29.06.2026</td><td>09:00</td><td>13:00</td><td>Иванова М.С.</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>2</td><td>01.07.2026</td><td>09:00</td><td>13:00</td><td>Иванова М.С.</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>3</td><td>30.06.2026</td><td>14:00</td><td>18:00</td><td>Петров А.В.</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>4</td><td>29.06.2026</td><td>10:00</td><td>14:00</td><td>Сорокина Е.И.</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>5</td><td>02.07.2026</td><td>10:00</td><td>14:00</td><td>Сорокина Е.И.</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>6</td><td>30.06.2026</td><td>08:00</td><td>12:00</td><td>Морозов Д.А.</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+            <tr><td>7</td><td>01.07.2026</td><td>13:00</td><td>17:00</td><td>Гончарова О.П.</td><td class="row-actions"><a>Изменить</a><a>Удалить</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-consults">
+      <div class="topbar"><h1>Консультации</h1><div class="meta">номер · дата · продолжительность · клиент · психолог · результат</div></div>
+      <div class="panel">
+        <div class="panel-head"><h2>Журнал консультаций</h2><button class="btn" onclick="openModal('consult')">+ Новая консультация</button></div>
+        <table>
+          <thead><tr><th>№</th><th>Дата</th><th>Длит.</th><th>Клиент</th><th>Психолог</th><th>Результат</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>29.06.2026</td><td>60 мин</td><td>Сидоров И.П.</td><td>Иванова М.С.</td><td><span class="tag ok">Первичная, курс назначен</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+            <tr><td>2</td><td>30.06.2026</td><td>45 мин</td><td>Кузнецова А.О.</td><td>Петров А.В.</td><td><span class="tag ok">Тревожность снижена</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+            <tr><td>3</td><td>29.06.2026</td><td>50 мин</td><td>Лебедев С.В.</td><td>Сорокина Е.И.</td><td><span class="tag ok">Положительная динамика</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+            <tr><td>4</td><td>30.06.2026</td><td>60 мин</td><td>Новикова Д.И.</td><td>Морозов Д.А.</td><td><span class="tag warn">Нужен повторный приём</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+            <tr><td>5</td><td>01.07.2026</td><td>40 мин</td><td>Тарасов М.О.</td><td>Гончарова О.П.</td><td><span class="tag ok">Завершена успешно</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+            <tr><td>6</td><td>01.07.2026</td><td>60 мин</td><td>Сидоров И.П.</td><td>Иванова М.С.</td><td><span class="tag ok">Повторный приём, прогресс</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+            <tr><td>7</td><td>02.07.2026</td><td>30 мин</td><td>Волкова Ю.А.</td><td>Сорокина Е.И.</td><td><span class="tag">Краткая консультация</span></td><td class="row-actions"><a>Изменить</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="modal-title">Добавить запись</h3>
+    <div id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn secondary" onclick="closeModal()">Отмена</button>
+      <button class="btn" onclick="closeModal()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const navItems = document.querySelectorAll('.nav-item');
+  const views = document.querySelectorAll('.view');
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      navItems.forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+      views.forEach(v => v.classList.remove('active'));
+      document.getElementById('view-' + item.dataset.view).classList.add('active');
+    });
+  });
+
+  const forms = {
+    client: { title: 'Добавить клиента', fields: ['Фамилия','Имя','Отчество','Дата рождения','Телефон','Email'] },
+    psych: { title: 'Добавить психолога', fields: ['Фамилия','Имя','Отчество','Квалификация','Стаж работы','Телефон'] },
+    direction: { title: 'Добавить направление', fields: ['Наименование направления'] },
+    schedule: { title: 'Добавить запись расписания', fields: ['Дата приёма','Время начала','Время окончания','Психолог'] },
+    consult: { title: 'Новая консультация', fields: ['Дата проведения','Продолжительность (мин)','Клиент','Психолог','Результат консультации'] },
+  };
+
+  function openModal(type){
+    const cfg = forms[type];
+    document.getElementById('modal-title').textContent = cfg.title;
+    document.getElementById('modal-body').innerHTML = cfg.fields.map(f =>
+      `<div class="field"><label>${f}</label><input type="text" placeholder="${f}"></div>`
+    ).join('');
+    document.getElementById('overlay').classList.add('show');
+  }
+  function closeModal(){
+    document.getElementById('overlay').classList.remove('show');
+  }
+</script>
+</body>
+</html>
